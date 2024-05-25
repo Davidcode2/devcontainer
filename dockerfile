@@ -1,7 +1,7 @@
 FROM archlinux:latest as base
 
 RUN pacman -Sy
-RUN pacman -S --noconfirm --needed neovim nodejs npm typescript git openssh zsh tmux man tldr && \ 
+RUN pacman -S --noconfirm --needed neovim fzf nodejs npm typescript git openssh zsh tmux man tldr && \ 
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash 
 
 COPY .config/nvim  /root/.config/nvim 

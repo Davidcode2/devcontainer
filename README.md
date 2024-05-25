@@ -11,8 +11,14 @@ Build image:
 docker build .
 ```
 
-Run:
+In your code workspace run:
 
 ```
-./rundev.sh nameOfyourChoice
+path/to/rundev.sh containerNameOfYourChoice
+```
+
+Then:
+
+```
+docker exec -ti containerNameOfYourChoice zsh
 ```
