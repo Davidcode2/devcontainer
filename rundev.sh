@@ -2,7 +2,7 @@
 
 # See README.md in this repo for usage instructions
 
-IMAGE_NAME=${IMAGE_NAME:=archlinux}
+IMAGE_NAME=${IMAGE_NAME:=archdev}
 EXTERNAL_MOUNT=${EXTERNAL_MOUNT:=/mnt/arch_in_docker}
 INTERNAL_MOUNT=${INTERNAL_MOUNT:=/mnt/host_accessible}
 

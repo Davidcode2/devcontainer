@@ -22,3 +22,5 @@ Then:
 ```
 docker exec -ti containerNameOfYourChoice zsh
 ```
+
+To start nvim with a command: `vi +PlugInstall`
