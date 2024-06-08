@@ -33,7 +33,7 @@ RUN alias config=$config >> .bashrc && \
 RUN echo -e 'chsh -s /bin/zsh \n' >> .bashrc
 
 RUN echo "source .config/shell/aliasrc" >> .bashrc
-RUN echo "source .config/zsh/.zshrc" >> .bashrc
 RUN cp .bashrc .zshrc
+RUN echo "source .config/zsh/.zshrc" >> .zshrc
 
 WORKDIR workspace
