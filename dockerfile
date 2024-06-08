@@ -1,25 +1,40 @@
 FROM archlinux:latest as base
 
 RUN pacman -Sy
-RUN pacman -S --noconfirm --needed neovim fzf nodejs npm typescript git openssh zsh tmux man tldr && \ 
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash 
+RUN pacman -S --noconfirm --needed neovim fzf nodejs npm typescript git openssh zsh tmux man tldr 
 
-COPY .config/nvim  /root/.config/nvim 
-COPY .config/zsh /root/.config/zsh
-COPY .config/shell /root/.config/shell
-COPY .config/tmuxinator /root.config/tmuxinator
-COPY .zshenv /root
-COPY .bashrc /root
-COPY .bash_profile /root
+WORKDIR /root
 
-RUN echo 'chsh -s /bin/zsh' >> /root/.bashrc
+RUN touch .bashrc
 
-RUN echo 'if [ ! -f ${HOME}/.local/share/nvim/site/autoload/plug.vim ]; \
-     then curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim ; \
-   fi' >> /root/.bashrc 
-  
+# install nvm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash 
+
+# nvm 
 RUN echo 'export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" \
-   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm' >> /root/.bashrc
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm' >> .bashrc
 
+# Plug
+RUN echo -e 'if [ ! -f ${HOME}/.local/share/nvim/site/autoload/plug.vim ]; \n \
+     then curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \n \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim ; \n \
+   fi \n' >> .bashrc 
+  
+# clone dotfiles into bare repo
+RUN echo "alias config='/usr/bin/git --git-dir=.cfg/ --work-tree=/root'" >> .bashrc
+ARG config='/usr/bin/git --git-dir=.cfg/ --work-tree=/root'
+RUN touch .gitignore && echo ".cfg" >> .gitignore
+RUN git clone --bare https://github.com/Davidcode2/dotfiles.git -b wayland .cfg 
+RUN alias config=$config >> .bashrc && \
+  $config checkout -f && \
+  $config config --local status.showUntrackedFiles no
 
+# change default shell to zsh
+RUN echo -e 'chsh -s /bin/zsh \n' >> .bashrc
+
+RUN echo "source .config/shell/aliasrc" >> .bashrc
+RUN echo "source .config/zsh/.zshrc" >> .bashrc
+RUN cp .bashrc .zshrc
+
+WORKDIR workspace
+CMD ["nvim", "+PlugInstall"]
