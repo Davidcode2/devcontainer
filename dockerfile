@@ -37,4 +37,3 @@ RUN echo "source .config/zsh/.zshrc" >> .bashrc
 RUN cp .bashrc .zshrc
 
 WORKDIR workspace
-CMD ["nvim", "+PlugInstall"]
